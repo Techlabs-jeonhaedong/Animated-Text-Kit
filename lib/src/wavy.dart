@@ -12,11 +12,17 @@ class WavyAnimatedText extends AnimatedText {
   /// By default it is set to 300 milliseconds.
   final Duration speed;
 
+  /// The height multiplier that controls how high characters will jump
+  ///
+  /// By default it is set to 1.3
+  final double heightMultiplier;
+
   WavyAnimatedText(
     String text, {
     TextAlign textAlign = TextAlign.start,
     TextStyle? textStyle,
     this.speed = const Duration(milliseconds: 300),
+    this.heightMultiplier = 1.3,
   }) : super(
           text: text,
           textAlign: textAlign,
@@ -28,8 +34,7 @@ class WavyAnimatedText extends AnimatedText {
 
   @override
   void initAnimation(AnimationController controller) {
-    _waveAnim = Tween<double>(begin: 0, end: textCharacters.length / 2 + 0.52)
-        .animate(controller);
+    _waveAnim = Tween<double>(begin: 0, end: textCharacters.length / 2 + 0.52).animate(controller);
   }
 
   @override
@@ -43,12 +48,11 @@ class WavyAnimatedText extends AnimatedText {
           text: text,
           textStyle: defaultTextStyle.merge(textStyle),
           textScaler: textScaler,
+          heightMultiplier: heightMultiplier,
         ),
         child: Text(
           text,
-          style: defaultTextStyle
-              .merge(textStyle)
-              .merge(TextStyle(color: Colors.transparent)),
+          style: defaultTextStyle.merge(textStyle).merge(TextStyle(color: Colors.transparent)),
           textScaler: textScaler,
         ),
       ),
@@ -78,9 +82,10 @@ class WavyAnimatedTextKit extends AnimatedTextKit {
     bool repeatForever = true,
     bool displayFullTextOnTap = false,
     bool stopPauseOnTap = false,
+    double heightMultiplier = 1.3,
   }) : super(
           key: key,
-          animatedTexts: _animatedTexts(text, textAlign, textStyle, speed),
+          animatedTexts: _animatedTexts(text, textAlign, textStyle, speed, heightMultiplier),
           pause: pause,
           displayFullTextOnTap: displayFullTextOnTap,
           stopPauseOnTap: stopPauseOnTap,
@@ -98,6 +103,7 @@ class WavyAnimatedTextKit extends AnimatedTextKit {
     TextAlign textAlign,
     TextStyle? textStyle,
     Duration speed,
+    double heightMultiplier,
   ) =>
       text
           .map((text) => WavyAnimatedText(
@@ -105,6 +111,7 @@ class WavyAnimatedTextKit extends AnimatedTextKit {
                 textAlign: textAlign,
                 textStyle: textStyle,
                 speed: speed,
+                heightMultiplier: heightMultiplier,
               ))
           .toList();
 }
@@ -115,11 +122,13 @@ class _WTextPainter extends CustomPainter {
     required this.text,
     required this.textStyle,
     required this.textScaler,
+    required this.heightMultiplier,
   });
 
   final double progress;
   final TextScaler textScaler;
   final String text;
+  final double heightMultiplier;
   // Private class to store text information
   final _textLayoutInfo = <_TextLayoutInfo>[];
   final TextStyle textStyle;
@@ -133,8 +142,7 @@ class _WTextPainter extends CustomPainter {
 
     for (var textLayout in _textLayoutInfo) {
       // offset required to center the characters
-      final centerOffset =
-          Offset(size.width / 2, (size.height / 2 - textLayout.height / 2));
+      final centerOffset = Offset(size.width / 2, (size.height / 2 - textLayout.height / 2));
 
       if (textLayout.isMoving) {
         final p = math.min(progress * 2, 1.0);
@@ -144,8 +152,7 @@ class _WTextPainter extends CustomPainter {
             textLayout.text,
             Offset(
                   textLayout.offsetX,
-                  (textLayout.offsetY -
-                      (textLayout.offsetY - textLayout.riseHeight) * p),
+                  (textLayout.offsetY - (textLayout.offsetY - textLayout.riseHeight) * p),
                 ) +
                 centerOffset,
             textLayout);
@@ -184,21 +191,18 @@ class _WTextPainter extends CustomPainter {
     if (txtInMoOdd < (text.length - 1) / 2 && !txtInMoOdd.isNegative) {
       _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].isMoving = true;
       // percent < .5 creates an phase difference between odd and even chars
-      _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].riseHeight = progress < .5
-          ? 0
-          : -1.3 * height * math.sin((progress - .5) * math.pi).abs();
+      _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].riseHeight =
+          progress < .5 ? 0 : -heightMultiplier * height * math.sin((progress - .5) * math.pi).abs();
     }
 
     // Calculating movement of the char at even place
     if (txtInMoEven < text.length) {
       _textLayoutInfo[txtInMoEven].isMoving = true;
-      _textLayoutInfo[txtInMoEven].riseHeight =
-          -1.3 * height * math.sin(percent * math.pi);
+      _textLayoutInfo[txtInMoEven].riseHeight = -heightMultiplier * height * math.sin(percent * math.pi);
     }
   }
 
-  void drawText(Canvas canvas, String text, Offset offset,
-      _TextLayoutInfo textLayoutInfo) {
+  void drawText(Canvas canvas, String text, Offset offset, _TextLayoutInfo textLayoutInfo) {
     var textPainter = TextPainter(
       text: TextSpan(
         text: text,
@@ -249,8 +253,7 @@ class _WTextPainter extends CustomPainter {
         offsetY: forCaret.dy,
         width: textPainter.width,
         height: textPainter.height,
-        baseline: textPainter
-            .computeDistanceToActualBaseline(TextBaseline.ideographic),
+        baseline: textPainter.computeDistanceToActualBaseline(TextBaseline.ideographic),
       );
 
       list.add(textLayoutInfo);
