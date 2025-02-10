@@ -157,7 +157,7 @@ class _WTextPainter extends CustomPainter {
             textLayout.text,
             Offset(
                   textLayout.offsetX,
-                  (textLayout.offsetY - (textLayout.offsetY - textLayout.riseHeight) * math.sin(p * math.pi)),
+                  (textLayout.offsetY - (textLayout.offsetY - textLayout.riseHeight) * p),
                 ) +
                 centerOffset,
             textLayout);
@@ -197,13 +197,13 @@ class _WTextPainter extends CustomPainter {
       _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].isMoving = true;
       // percent < .5 creates an phase difference between odd and even chars
       _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].riseHeight =
-          progress < .5 ? 0 : -heightMultiplier * height * math.sin((progress - .5) * math.pi * 2).abs();
+          progress < .5 ? 0 : -heightMultiplier * height * math.sin((progress - .5) * math.pi).abs();
     }
 
     // Calculating movement of the char at even place
     if (txtInMoEven < text.length) {
       _textLayoutInfo[txtInMoEven].isMoving = true;
-      _textLayoutInfo[txtInMoEven].riseHeight = -heightMultiplier * height * math.sin(percent * math.pi * 2);
+      _textLayoutInfo[txtInMoEven].riseHeight = -heightMultiplier * height * math.sin(percent * math.pi);
     }
   }
 
