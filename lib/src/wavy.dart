@@ -34,7 +34,12 @@ class WavyAnimatedText extends AnimatedText {
 
   @override
   void initAnimation(AnimationController controller) {
-    _waveAnim = Tween<double>(begin: 0, end: textCharacters.length / 2 + 0.52).animate(controller);
+    _waveAnim = Tween<double>(begin: 0, end: textCharacters.length / 2 + 0.52).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.linear,
+      ),
+    );
   }
 
   @override
