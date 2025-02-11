@@ -195,9 +195,9 @@ class _WTextPainter extends CustomPainter {
     // Calculating movement of the char at odd place
     if (txtInMoOdd < (text.length - 1) / 2 && !txtInMoOdd.isNegative) {
       _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].isMoving = true;
-      // percent < .5 creates an phase difference between odd and even chars
+      // percent < .3 creates an earlier phase difference between odd and even chars
       _textLayoutInfo[txtInMoOdd + (txtInMoOdd + 1)].riseHeight =
-          progress < .5 ? 0 : -heightMultiplier * height * math.sin((progress - .5) * math.pi).abs();
+          progress < .2 ? 0 : -heightMultiplier * height * math.sin((progress - .5) * math.pi).abs();
     }
 
     // Calculating movement of the char at even place

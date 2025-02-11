@@ -142,11 +142,7 @@ class AnimatedTextExample {
   final Widget child;
   final AnimatedTextController controller;
 
-  const AnimatedTextExample(
-      {required this.label,
-      required this.color,
-      required this.child,
-      required this.controller});
+  const AnimatedTextExample({required this.label, required this.color, required this.child, required this.controller});
 }
 
 // Colorize Text Style
@@ -284,10 +280,8 @@ List<AnimatedTextExample> animatedTextExamples({VoidCallback? onTap}) {
             animatedTexts: [
               TypewriterAnimatedText('Discipline is the best tool'),
               TypewriterAnimatedText('Design first, then code', cursor: '|'),
-              TypewriterAnimatedText('Do not patch bugs out, rewrite them',
-                  cursor: '<|>'),
-              TypewriterAnimatedText('Do not test bugs out, design them out',
-                  cursor: '💡'),
+              TypewriterAnimatedText('Do not patch bugs out, rewrite them', cursor: '<|>'),
+              TypewriterAnimatedText('Do not test bugs out, design them out', cursor: '💡'),
             ],
             controller: typewriterController,
             onTap: onTap,
@@ -366,15 +360,8 @@ List<AnimatedTextExample> animatedTextExamples({VoidCallback? onTap}) {
         ),
         child: AnimatedTextKit(
           animatedTexts: [
-            WavyAnimatedText(
-              'Hello World',
-              textStyle: const TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            WavyAnimatedText('Look at the waves'),
-            WavyAnimatedText('They look so Amazing'),
+            WavyAnimatedText('Look at the waves', speed: const Duration(milliseconds: 200), heightMultiplier: 0.6),
+            WavyAnimatedText('They look so Amazing', speed: const Duration(milliseconds: 200), heightMultiplier: 0.6),
           ],
           controller: wavyTextController,
           onTap: onTap,
